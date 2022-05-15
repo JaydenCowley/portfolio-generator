@@ -4,26 +4,26 @@
 // //console.log(profileDataArgs);
 // // this...
 // const printProfileData = profileDataArr => {
-//     for (let i = 0; i < profileDataArr.length; i += 1){
-//     console.log(profileDataArr[i]);
-//     }
-//     console.log('=============');
-// // is the same as this
-//     profileDataArr.forEach((profileItem) => console.log(profileItem));
-// };
-// printProfileData(profileDataArgs)
-// const profileDataArgs = process.argv.slice(2);
-// const [name, github] = profileDataArgs;
-// Name: ${userName} 
-// Github: ${githubName}
-
-const inquirer = require('inquirer');
-const Prompt = require('inquirer/lib/prompts/base');
-const { type } = require('os');
-const promptUser = () => {
-    return inquirer.prompt([
-        {
-            type: 'input',
+    //     for (let i = 0; i < profileDataArr.length; i += 1){
+        //     console.log(profileDataArr[i]);
+        //     }
+        //     console.log('=============');
+        // // is the same as this
+        //     profileDataArr.forEach((profileItem) => console.log(profileItem));
+        // };
+        // printProfileData(profileDataArgs)
+        // const profileDataArgs = process.argv.slice(2);
+        // const [name, github] = profileDataArgs;
+        // Name: ${userName} 
+        // Github: ${githubName}
+        const fs = require('fs')
+        const inquirer = require('inquirer');
+        const generatePage = require('./src/page-template');
+        
+        const promptUser = () => {
+            return inquirer.prompt([
+                {
+                    type: 'input',
             name: 'name',
             message: 'What is your name (Required)?',
             validate: nameInput => {
@@ -70,16 +70,17 @@ const promptUser = () => {
     ]);
 };
 const promptProject = portfolioData => {
-    // If there's no 'projects' array property, create one
-    if (!portfolioData.projects) {
-        portfolioData.projects = [];
-    }
     console.log(`
     ==================
     Add a New Project
     ==================
     `);
-    return inquirer.prompt([
+    // If there's no 'projects' array property, create one
+    if (!portfolioData.projects) {
+        portfolioData.projects = [];
+    }
+    return inquirer
+        .prompt([
         {
             type: 'input',
             name: 'name',
@@ -142,17 +143,14 @@ const promptProject = portfolioData => {
         });
 };
 
-promptUser().then(answers => console.log(answers))
-    .then(promptProject)
-    .then(projectAnswers => console.log(projectAnswers));
-// const fs = require('fs')
-// const generatePage = require('./src/page-template');
-
-// const pageHTML = generatePage(name,github)
-
-
-// fs.writeFile('index.html', pageHTML, err => {
-//     if (err) throw err;
-
-//     console.log('Portfolio complete! Check out index.html to see the output!');
-// });
+promptUser()
+  .then(promptProject)
+  .then(portfolioData => {
+    console.log(portfolioData);
+    // will be uncommented in lesson 4
+    // const pageHTML = generatePage(portfolioData);
+    // fs.writeFile('./index.html', pageHTML, err => {
+    //   if (err) throw new Error(err);
+    //   console.log('Page created! Check out index.html in this directory to see it!');
+    // });
+  });
